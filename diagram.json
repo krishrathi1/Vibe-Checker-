@@ -1,0 +1,124 @@
+{
+  "version": 1,
+  "author": "Crowd Mood Estimator",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-arduino-uno",
+      "id": "uno",
+      "top": 320,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-lcd1602",
+      "id": "lcd",
+      "top": 10,
+      "left": 20,
+      "attrs": { "pins": "i2c" }
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot",
+      "top": 340,
+      "left": -200,
+      "attrs": { "label": "Crowd Energy" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "ledG",
+      "top": 130,
+      "left": 280,
+      "attrs": { "color": "green", "label": "CALM" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rG",
+      "top": 130,
+      "left": 215,
+      "rotate": 90,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "ledY",
+      "top": 190,
+      "left": 280,
+      "attrs": { "color": "yellow", "label": "ACTIVE" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rY",
+      "top": 190,
+      "left": 215,
+      "rotate": 90,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "ledO",
+      "top": 250,
+      "left": 280,
+      "attrs": { "color": "orange", "label": "EXCITED" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rO",
+      "top": 250,
+      "left": 215,
+      "rotate": 90,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "ledR",
+      "top": 310,
+      "left": 280,
+      "attrs": { "color": "red", "label": "CHAOTIC" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rR",
+      "top": 310,
+      "left": 215,
+      "rotate": 90,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "buzzer",
+      "top": 370,
+      "left": 280,
+      "attrs": { "label": "ALERT" }
+    }
+  ],
+  "connections": [
+    ["uno:A4",   "lcd:SDA",  "green",  []],
+    ["uno:A5",   "lcd:SCL",  "blue",   []],
+    ["uno:5V",   "lcd:VCC",  "red",    []],
+    ["uno:GND.1","lcd:GND",  "black",  []],
+
+    ["pot:SIG",  "uno:A0",   "green",  []],
+    ["pot:VCC",  "uno:5V",   "red",    []],
+    ["pot:GND",  "uno:GND.1","black",  []],
+
+    ["uno:8",    "rG:1",     "green",  []],
+    ["rG:2",     "ledG:A",   "green",  []],
+    ["ledG:C",   "uno:GND.1","black",  []],
+
+    ["uno:9",    "rY:1",     "yellow", []],
+    ["rY:2",     "ledY:A",   "yellow", []],
+    ["ledY:C",   "uno:GND.1","black",  []],
+
+    ["uno:10",   "rO:1",     "orange", []],
+    ["rO:2",     "ledO:A",   "orange", []],
+    ["ledO:C",   "uno:GND.1","black",  []],
+
+    ["uno:11",   "rR:1",     "red",    []],
+    ["rR:2",     "ledR:A",   "red",    []],
+    ["ledR:C",   "uno:GND.1","black",  []],
+
+    ["uno:12",   "buzzer:1", "black",  []],
+    ["buzzer:2", "uno:GND.1","black",  []]
+  ]
+}
