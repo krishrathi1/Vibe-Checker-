@@ -1,4 +1,4 @@
 [wokwi]
 version = 1
-firmware = 'sketch.ino'
-layout = 'diagram.json'
+firmware = 'build/sketch.ino.hex'
+elf = 'build/sketch.ino.elf'
