@@ -21,6 +21,15 @@ const int BUZZER_PIN  = 12;
 const int SAMPLE_WINDOW = 40; 
 float noiseFloor = 0;         
 float peakScore = 0;       
+const unsigned long SERIAL_TIMEOUT_MS = 3000;
+
+// Serial AI override state
+bool serialOverride = false;
+unsigned long lastSerialMsgMs = 0;
+String serialMood = "CALM   ";
+int serialMoodLvl = 1;
+int serialScore = 0; // 0..100
+String serialLine = "";
 
 // Use fixed Wokwi LCD I2C address for stability
 LiquidCrystal_I2C lcd(0x27, 16, 2);
@@ -75,6 +84,18 @@ void setup() {
 }
 
 void loop() {
+  handleSerialInput();
+
+  // If external AI is sending mood updates, use them as the source of truth.
+  if (serialOverride && (millis() - lastSerialMsgMs) <= SERIAL_TIMEOUT_MS) {
+    updateHardware(serialMoodLvl);
+    renderMood(serialMood, serialScore);
+    delay(50);
+    return;
+  }
+
+  serialOverride = false;
+
   float samples[SAMPLE_WINDOW];
   float sum = 0;
 
@@ -118,16 +139,7 @@ void loop() {
   updateHardware(moodLvl);
 
   // 7. LCD Update
-  lcd.setCursor(0, 0);
-  lcd.print("MOOD: " + mood);
-  
-  // Custom Intensity Meter on Row 1
-  lcd.setCursor(0, 1);
-  int meterWidth = map((int)normalizedScore, 0, 100, 0, 15);
-  for(int i=0; i<16; i++) {
-    if(i <= meterWidth) lcd.write((uint8_t)map(meterWidth, 0, 15, 0, 7));
-    else lcd.print(" ");
-  }
+  renderMood(mood, (int)normalizedScore);
 
   // 8. Data Logging
   Serial.print("[DATA] Avg:"); Serial.print(avgEnergy);
@@ -149,5 +161,76 @@ void updateHardware(int level) {
     tone(BUZZER_PIN, 1000);
   } else {
     noTone(BUZZER_PIN);
+  }
+}
+
+void renderMood(String mood, int scorePercent) {
+  lcd.setCursor(0, 0);
+  lcd.print("MOOD: " + mood);
+
+  lcd.setCursor(0, 1);
+  int meterWidth = map(constrain(scorePercent, 0, 100), 0, 100, 0, 15);
+  for (int i = 0; i < 16; i++) {
+    if (i <= meterWidth) lcd.write((uint8_t)map(meterWidth, 0, 15, 0, 7));
+    else lcd.print(" ");
+  }
+}
+
+int moodToLevel(String mood) {
+  mood.trim();
+  mood.toUpperCase();
+  if (mood == "CALM") return 1;
+  if (mood == "ACTIVE") return 2;
+  if (mood == "EXCITED") return 3;
+  if (mood == "CHAOTIC") return 4;
+  return 1;
+}
+
+void handleSerialInput() {
+  while (Serial.available() > 0) {
+    char c = (char)Serial.read();
+    if (c == '\r') continue;
+
+    if (c != '\n') {
+      serialLine += c;
+      if (serialLine.length() > 120) serialLine = "";
+      continue;
+    }
+
+    String line = serialLine;
+    serialLine = "";
+    line.trim();
+    if (line.length() == 0) continue;
+
+    // Supported formats:
+    // 1) MOOD:CALM
+    // 2) MOOD:EXCITED,SCORE:72
+    int moodPos = line.indexOf("MOOD:");
+    if (moodPos < 0) continue;
+
+    int moodStart = moodPos + 5;
+    int commaPos = line.indexOf(",", moodStart);
+    String moodToken = (commaPos >= 0) ? line.substring(moodStart, commaPos) : line.substring(moodStart);
+    moodToken.trim();
+    moodToken.toUpperCase();
+
+    int parsedLevel = moodToLevel(moodToken);
+    String paddedMood = moodToken;
+    while (paddedMood.length() < 7) paddedMood += " ";
+
+    int score = serialScore;
+    int scorePos = line.indexOf("SCORE:");
+    if (scorePos >= 0) {
+      int scoreStart = scorePos + 6;
+      String scoreToken = line.substring(scoreStart);
+      scoreToken.trim();
+      score = constrain(scoreToken.toInt(), 0, 100);
+    }
+
+    serialMood = paddedMood;
+    serialMoodLvl = parsedLevel;
+    serialScore = score;
+    serialOverride = true;
+    lastSerialMsgMs = millis();
   }
 }
