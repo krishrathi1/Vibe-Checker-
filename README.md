@@ -1,4 +1,4 @@
-﻿# Digital Crowd Mood Estimator v2.0
+﻿#  Digital Crowd Mood Estimator v2.0
 
 An IoT semester project that classifies crowd mood and displays it on LCD/LED/Buzzer.
 
