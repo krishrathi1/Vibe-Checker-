@@ -71,9 +71,30 @@
                     ENVIRONMENTAL SENSORS
                 </div>
                 <div class="sensor-grid" style="grid-template-columns: 1fr;">
-                    <div class="sensor-card" style="padding: 2.5rem; text-align: center;">
-                        <span style="font-size: 1rem; color: var(--text-muted); text-transform: uppercase;">Real-time Noise Level</span>
-                        <span class="sensor-val" id="noiseVal" style="font-size: 3.5rem;">0 dB</span>
+                    <div class="sensor-card" style="padding: 1.5rem; text-align: center;">
+                        <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Real-time Noise Level</span>
+                        <span class="sensor-val" id="noiseVal" style="font-size: 2.5rem;">0 dB</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New: Disturbance Monitor Card (Restored) -->
+            <div class="card" style="border: 1px solid rgba(239, 68, 68, 0.2);">
+                <div class="card-title">
+                    <i data-lucide="alert-triangle"></i>
+                    ALARM & THREAT MONITOR
+                </div>
+                <div style="text-align: center; padding: 0.5rem;">
+                    <div style="color: var(--danger); font-size: 2.5rem; font-weight: 800;" id="disturbanceCount">0</div>
+                    <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 1rem;">TOTAL SHOUT DETECTIONS</p>
+                    
+                    <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 1rem; text-align: left; border: 1px solid var(--glass-border);">
+                        <p style="font-size: 0.6rem; color: var(--text-muted);">Current Threat Level:</p>
+                        <p id="threatLevel" style="font-size: 0.9rem; font-weight: 700; color: #94a3b8;">INITIALIZING...</p>
+                    </div>
+
+                    <div id="buzzerIndicator" style="margin-top: 1rem; font-size: 0.8rem; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <i data-lucide="bell-off"></i> BUZZER SILENT
                     </div>
                 </div>
             </div>

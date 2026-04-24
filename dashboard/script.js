@@ -65,21 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function updateRegression(actual, predicted) {
-        // Disabled as per user request to replace with Training Insights
-    }
-    // Regression Point Update Function
-    function updateRegression(actual, predicted) {
-        const dataset = regressionChart.data.datasets[0];
-        dataset.data.push({ x: actual, y: predicted });
-        if (dataset.data.length > 50) dataset.data.shift();
-        regressionChart.update('none');
+        // Training Insights section handles this now
     }
 
-    // Background Synthetic Data (Simulating model observation)
+    // Background Synthetic Data (Simulating session activity)
     setInterval(() => {
         if (isMicActive) {
-            let base = Math.random() * 100;
-            updateRegression(base + (Math.random() * 4 - 2), base);
+            totalSamples++;
+            if (totalSamples % 5 == 0) document.getElementById('rowCount').innerText = totalSamples.toLocaleString();
         }
     }, 4000);
 
@@ -283,9 +276,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     let intensity = Math.min(100, Math.max(40, Math.floor(average * 0.9) + jitter));
                     logDisturbance(intensity);
 
-                    // Add to Regression Analysis
-                    updateRegression(intensity + (Math.random() * 8 - 4), intensity);
-                    
                     lastShoutTime = Date.now();
                 }
 
